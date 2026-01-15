@@ -1,0 +1,41 @@
+name: Fetch Vendors
+
+on:
+  schedule:
+    - cron: "0 6 * * *"  # every day at 6:00 UTC
+  workflow_dispatch:      # allows manual trigger
+
+jobs:
+  update-vendors:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1️⃣ Checkout repo
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # 2️⃣ Setup Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20"
+
+      # 3️⃣ Install dependencies if needed
+      - name: Install dependencies
+        run: npm ci || echo "No package.json, skipping"
+
+      # 4️⃣ Run fetch script
+      - name: Fetch vendors and update JSON
+        run: node .gihub/scripts/fetchVendors.js
+        env:
+          SCRIPT_URL: ${{ secrets.SCRIPT_URL }}
+          SCRIPT_UID: ${{ secrets.SCRIPT_UID }}
+
+      # 5️⃣ Commit & push changes
+      - name: Commit updated vendors
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add vendors.json
+          git diff-index --quiet HEAD || git commit -m "Update vendors from Google Sheet"
+          git push
