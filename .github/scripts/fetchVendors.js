@@ -1,5 +1,4 @@
 // fetchVendors.js
-import fetch from "node-fetch";
 import fs from "fs";
 
 const SCRIPT_URL = process.env.SCRIPT_URL; // store your Google script URL as a GitHub secret
