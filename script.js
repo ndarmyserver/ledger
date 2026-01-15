@@ -60,12 +60,10 @@ auth.onAuthStateChanged(async user => {
     populateDefaultVendors();
 
     try {
-      await fetchScriptUrlOnce(); // fetch Remote Config once
       await loadVendors();
     } catch (err) {
-      console.error("Cannont load remote vendors: ", err);
+      console.error("Cannont load vendors.json: ", err);
     }
-    
 
   } else {
     document.querySelector(".card").classList.remove("show");
@@ -138,33 +136,28 @@ function populateDefaultVendors() {
   renderVendors(sortedDefaults, vendorSelect);
 }
 
-// Get vendors from Google sheet and add in new ones to dropdown
+// Get vendors from local vendors.json and add in new ones to dropdown
 async function loadVendors() {
   try {
-    const user = auth.currentUser;
-    if (!user) throw new Error("Not logged in.");
-    
-    // Make sure that the script url is available
-    if (!scriptUrl) throw new Error("scriptUrl not available");
+    // Fetch the vendors.json file (served from your repo/site)
+    const response = await fetch("./vendors.json");
+    if (!response.ok) throw new Error("Failed to fetch vendors.json");
 
-    const response = await fetch(`${scriptUrl}?uid=${encodeURIComponent(user.uid)}`);
-    const data = await response.json();
+    const data = await response.json(); // now data is an array like ["Taco Bell"]
 
-    if (data.success && data.vendors) {
-      // Combine sheet vendors with your default vendors
-      const combinedLabels = [...DEFAULT_VENDORS, ...data.vendors];
+    // Combine sheet vendors with your default vendors
+    const combinedLabels = [...DEFAULT_VENDORS, ...data];
 
-      // Remove duplicates (case-insensitive)
-      const uniqueLabels = Array.from(
-        new Set(combinedLabels.map(l => l.toLowerCase()))
-      ).map(lc => combinedLabels.find(label => label.toLowerCase() === lc));
+    // Remove duplicates (case-insensitive)
+    const uniqueLabels = Array.from(
+      new Set(combinedLabels.map(l => l.toLowerCase()))
+    ).map(lc => combinedLabels.find(label => label.toLowerCase() === lc));
 
-      const sortedLabels = sortVendorLabels(uniqueLabels);
-      renderVendors(sortedLabels, vendorSelect);
-    }
+    const sortedLabels = sortVendorLabels(uniqueLabels);
+    renderVendors(sortedLabels, vendorSelect);
 
   } catch (err) {
-    console.error("Failed to load vendors:", err);
+    console.error("Failed to load vendors.json:", err);
   }
 }
 
@@ -272,8 +265,8 @@ form.addEventListener("submit", async (e) => {
     // If user entered a new vendor, add it immediately
     addVendorToDropdown(vendor);
 
-    // Make sure Remote Config URL is available
-    if (!scriptUrl) throw new Error("scriptUrl not available");
+    // Ensure scriptUrl is available before posting
+    await fetchScriptUrlOnce();
 
     await fetch(scriptUrl, {
       method: "POST",
