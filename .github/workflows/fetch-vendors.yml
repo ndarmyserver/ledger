@@ -2,39 +2,32 @@ name: Fetch Vendors
 
 on:
   schedule:
-    - cron: "0 6 * * *"  # every day at 6:00 UTC
-  workflow_dispatch:      # allows manual trigger
+    - cron: "0 6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write   # 🔑 THIS GIVES THE GITHUB_TOKEN WRITE ACCESS
 
 jobs:
   update-vendors:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout repo
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
 
-      # 2️⃣ Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: "20"
 
-      # 3️⃣ Install dependencies if needed
-      - name: Install dependencies
-        run: npm ci || echo "No package.json, skipping"
-
-      # 4️⃣ Run fetch script
       - name: Fetch vendors and update JSON
         run: node .github/scripts/fetchVendors.js
         env:
           SCRIPT_URL: ${{ secrets.SCRIPT_URL }}
           SCRIPT_UID: ${{ secrets.SCRIPT_UID }}
 
-      # 5️⃣ Commit & push changes
-      - name: Commit updated vendors
+      - name: Commit and push updated vendors
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
