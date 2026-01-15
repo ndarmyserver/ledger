@@ -36,8 +36,8 @@ jobs:
       # 5️⃣ Commit & push changes
       - name: Commit updated vendors
         run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
           git add vendors.json
           git commit -m "Update vendors from Google Sheet" || echo "No changes to commit"
-          git push
+          git push origin HEAD:main
