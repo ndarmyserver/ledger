@@ -26,7 +26,7 @@ jobs:
 
       # 4️⃣ Run fetch script
       - name: Fetch vendors and update JSON
-        run: node .gihub/scripts/fetchVendors.js
+        run: node .github/scripts/fetchVendors.js
         env:
           SCRIPT_URL: ${{ secrets.SCRIPT_URL }}
           SCRIPT_UID: ${{ secrets.SCRIPT_UID }}
