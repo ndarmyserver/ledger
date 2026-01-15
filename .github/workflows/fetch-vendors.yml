@@ -12,7 +12,9 @@ jobs:
     steps:
       # 1️⃣ Checkout repo
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
 
       # 2️⃣ Setup Node.js
       - name: Setup Node.js
@@ -37,5 +39,5 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add vendors.json
-          git diff-index --quiet HEAD || git commit -m "Update vendors from Google Sheet"
+          git commit -m "Update vendors from Google Sheet" || echo "No changes to commit"
           git push
