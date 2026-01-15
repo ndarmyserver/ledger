@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Our Giving</title>
+  <!-- App name -->
+  <meta name="apple-mobile-web-app-title" content="Our Giving">
+  <!-- Make it open fullscreen, hide Safari UI -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <!-- Status bar style (options: default, black, black-translucent)-->
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <!-- Apple standard icons -->
+  <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon-180.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="/icons/apple-touch-icon-152.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="/icons/apple-touch-icon-120.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="/icons/apple-touch-icon-76.png">
+  <!-- Standard favicons -->
+  <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16.png">
+  <!-- Chrome pinned tab/shortcut icon -->
+  <link rel="icon" type="image/svg+xml" href="/icons/icon.svg">
+  <!-- Safari pinned tab icon -->
+  <link rel="mask-icon" href="/icons/safari-icon.svg" color="#000000">
+  <!-- Launch screen color on iOS -->
+  <meta name="theme-color" content="#393DA4">
+  
+  <link rel="stylesheet" href="styles.css" />
+  
+  <!-- Firebase base -->
+  <script src="https://www.gstatic.com/firebasejs/12.1.0/firebase-app-compat.js"></script>
+  <!-- Firebase Auth -->
+  <script src="https://www.gstatic.com/firebasejs/12.1.0/firebase-auth-compat.js"></script>
+  <!-- Firebase Remote Config -->
+  <script src="https://www.gstatic.com/firebasejs/12.1.0/firebase-remote-config-compat.js"></script>
+</head>
+<body>
+  <!-- Login Modal -->
+  <div id="loginModal" class="modal fade">
+    <div class="modal-content">
+      <h2>Sign In</h2>
+      <input type="email" id="emailInput" placeholder="Email" />
+      <input type="password" id="passwordInput" placeholder="Password" />
+      <button id="loginBtn">Sign In</button>
+      <p id="loginError" class="hidden"></p>
+    </div>
+  </div>
+
+  <!-- Add transaction card -->
+  <div class="card fade">
+    <form id="transactionForm">
+      <h2>Add Giving Transaction</h2>
+
+      <div class="category-toggle-wrapper">
+        <div class="category-toggle" role="group" aria-label="Category selector">
+          <div class="toggle-pill"></div>
+          <button type="button" class="toggle-option active" data-value="Charity" data-index="0">Charity</button>
+          <button type="button" class="toggle-option" data-value="Generosity" data-index="1">Generosity</button>
+        </div>
+      </div>
+      <input type="hidden" name="category" id="categoryInput" value="Charity">
+
+      <label>
+        Date
+        <input type="date" name="date" required />
+      </label>
+
+      <label>
+        Vendor
+        <select name="vendor" id="vendorSelect" required>
+          <option value="">Select vendor</option>
+          <option value="Other">Other</option>
+        </select>
+      </label>
+
+      <label id="otherVendorLabel" class="hidden">
+        Other Vendor
+        <input type="text" id="otherVendorInput" placeholder="Enter vendor name"/>
+      </label>
+
+      <label>
+        Description
+        <input type="text" name="description" required minlength="3" placeholder="Enter a short description…" />
+      </label>
+
+      <label>
+        Amount
+        <input
+          type="number"
+          name="amount"
+          step="0.01"
+          min="0.01"
+          required
+          placeholder="0.00"
+        />
+      </label>
+
+      <button type="submit" id="submitBtn">
+        <span class="btn-text">Submit</span>
+        <span class="spinner hidden"></span>
+      </button>
+    </form>
+
+    <div id="thankYou" class="hidden">
+      <h2>Thank you!</h2>
+      <p>Your transaction has been saved.</p>
+      <button id="addAnother">Add Another</button>
+    </div>
+  </div>
+
+  <button id="logoutBtn" class="logout-btn hidden">Log out</button>
+
+  <script src="script.js"></script>
+</body>
+</html>
