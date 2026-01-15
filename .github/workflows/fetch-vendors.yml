@@ -13,8 +13,6 @@ jobs:
       # 1️⃣ Checkout repo
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          persist-credentials: true
 
       # 2️⃣ Setup Node.js
       - name: Setup Node.js
@@ -35,9 +33,11 @@ jobs:
 
       # 5️⃣ Commit & push changes
       - name: Commit updated vendors
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add vendors.json
           git commit -m "Update vendors from Google Sheet" || echo "No changes to commit"
-          git push origin HEAD:main
+          git push https://x-access-token:${GITHUB_TOKEN}@github.com/ndarmyserver/giving-transactions.git HEAD:main
