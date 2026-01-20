@@ -10,6 +10,7 @@ export class Slider {
 
     // Gesture/animation state
     this.isDragging = false;
+    this.hasMoved = false;
     this.startX = 0;
     this.pillStartX = 0;
     this.animationFrame = null;
@@ -93,21 +94,34 @@ export class Slider {
   }
 
   addTouchListeners() {
+    const TAP_THRESHHOLD = 6; // pixels
     this.toggleEl.addEventListener("touchstart", e => {
       this.isDragging = true;
+      this.hasMoved = false;
       this.startX = e.touches[0].clientX;
+      
       if (this.animationFrame) cancelAnimationFrame(this.animationFrame);
+
       this.pillStartX = this.getCurrentPillX();
       this.pillEl.style.transition = "none";
     });
 
     this.toggleEl.addEventListener("touchmove", e => {
       if (!this.isDragging) return;
+
       const currentX = e.touches[0].clientX;
       const deltaX = currentX - this.startX;
+      
+      if (Math.abs(deltaX) > TAP_THRESHHOLD) {
+        this.hasMoved = true;
+      }
+
+      if (!this.hasMoved) return;
+      
       const optionWidth = this.toggleEl.offsetWidth / this.buttons.length;
       const maxX = optionWidth * (this.buttons.length - 1);
       const newX = Math.max(0, Math.min(this.pillStartX + deltaX, maxX));
+
       this.pillEl.style.transform = `translateX(${newX}px)`;
       e.preventDefault();
     }, { passive: false });
@@ -115,6 +129,18 @@ export class Slider {
     this.toggleEl.addEventListener("touchend", () => {
       if (!this.isDragging) return;
       this.isDragging = false;
+
+      if (!this.hasMoved) {
+        // Treat as a tap
+        const touchX = e.changedTrouches[0].clientX;
+        const rect = this.toggleEl.getBoundingClientRect();
+        const optionWidth = rect.width / this.buttons.length;
+        const index = Math.floor((touchX - rect.left) / optionWidth);
+        this.activate(index);
+        return
+      }
+
+      // Otherwise, snap after drag
       const optionWidth = this.toggleEl.offsetWidth / this.buttons.length;
       const pillLeft = this.pillEl.getBoundingClientRect().left;
       const toggleLeft = this.toggleEl.getBoundingClientRect().left;
