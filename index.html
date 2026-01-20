@@ -83,24 +83,24 @@
       </div>
       <input type="hidden" name="category" id="categoryInput" value="Charity">
 
-      <label id="birthdayNameLabel" class="collapsible">
-        Person
-        <select id="birthdayName">
-          <option value="">Select name</option>
-          <option value="John">John</option>
-          <option value="Kelly">Kelly</option>
-          <option value="Kate">Kate</option>
-          <option value="Brooke">Brooke</option>
-          <option value="Johnny">Johnny</option>
-        </select>
-      </label>
+      <div id="birthdayNameWrapper" class="birthday-toggle-wrapper collapsible">
+        <div class="birthday-toggle" role="group" aria-label="Birthday name selector">
+          <div class="toggle-pill"></div>
+          <button type="button" class="toggle-option active" data-value="John" data-index="0">John</button>
+          <button type="button" class="toggle-option" data-value="Kelly" data-index="1">Kelly</button>
+          <button type="button" class="toggle-option" data-value="Kate" data-index="1">Kate</button>
+          <button type="button" class="toggle-option" data-value="Brooke" data-index="1">Brooke</button>
+          <button type="button" class="toggle-option" data-value="Johnny" data-index="1">Johnny</button>
+        </div>
+      </div>
+      <input type="hidden" name="birthdayName" id="birthdayNameInput" value="John">
 
       <label>
         Date
         <input type="date" name="date" required />
       </label>
 
-      <label>
+      <label id="vendorLabel" class="collapsible show">
         Vendor
         <select name="vendor" id="vendorSelect" required>
           <option value="">Select vendor</option>
@@ -108,7 +108,7 @@
         </select>
       </label>
 
-      <label id="otherVendorLabel" class="hidden">
+      <label id="otherVendorLabel" class="collapsible">
         Other Vendor
         <input type="text" id="otherVendorInput" placeholder="Enter vendor name"/>
       </label>

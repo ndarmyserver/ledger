@@ -116,7 +116,7 @@ button:hover {
 }
 
 /* Toggle wrappers */
-.mode-toggle-wrapper, .category-toggle-wrapper {
+.mode-toggle-wrapper, .category-toggle-wrapper, .birthday-toggle-wrapper {
   display: block;          /* block-level helps iOS detect swipes */
   touch-action: pan-y;     /* vertical scrolling still works */
   -webkit-user-select: none;
@@ -124,7 +124,7 @@ button:hover {
 }
 
 /* Toggle container */
-.mode-toggle, .category-toggle {
+.mode-toggle, .category-toggle, .birthday-toggle {
   position: relative;
   margin: 0 auto;
   display: flex;
@@ -139,6 +139,10 @@ button:hover {
 
 .category-toggle {
   width: 240px;
+}
+
+.birthday-toggle {
+  width: 320px;
 }
 
 /* Sliding pill */
@@ -159,7 +163,7 @@ button:hover {
 }
 
 
-.mode-toggle button, .category-toggle button {
+.mode-toggle button, .category-toggle button, .birthday-toggle button {
   all: unset; /* remove all global button styles */
   flex: 1;
   display: flex;
@@ -198,6 +202,10 @@ button:hover {
   font-size: 12px;
   line-height: 1;
 }
+
+.birthday-toggle button {
+  font-size: 12px;
+}
   
 /* Active state */
 .toggle-option.active {
@@ -227,7 +235,7 @@ button:hover {
 }
 
 .collapsible.show {
-  max-height: 100px;
+  max-height: 120px;
   /* enough for label + select */
   opacity: 1;
   margin-bottom: 24px;

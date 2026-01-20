@@ -2,9 +2,10 @@ import { Slider } from './slider.js';
 // ----- TOGGLE SECTION -----
 // Variables & Constants
 let currentMode = "Giving";
-const birthdayNameLabel = document.getElementById("birthdayNameLabel");
-const birthdayNameSelect = document.getElementById("birthdayName");
-const hiddenInput = document.getElementById("categoryInput");
+const birthdayNameWrapper = document.getElementById("birthdayNameWrapper");
+const hiddenInputCategory = document.getElementById("categoryInput");
+const hiddenInputBirthdayName = document.getElementById("birthdayNameInput");
+const vendorLabel = document.getElementById("vendorLabel");
 
 // Initialize sliders
 const modeSlider = new Slider({
@@ -12,18 +13,26 @@ const modeSlider = new Slider({
   onActivate: (index, value) => {
     currentMode = value;
     configureCategoryToggle();
+    updateVendorVisibility();
   }
 });
 
 const categorySlider = new Slider({
   toggleEl: document.querySelector('.category-toggle'),
-  hiddenInputEl: hiddenInput
+  hiddenInputEl: hiddenInputCategory,
+  onActivate: () => {
+    updateVendorVisibility();
+  }
+});
+
+const birthdayNameSlider = new Slider({
+  toggleEl: document.querySelector('.birthday-toggle'),
+  hiddenInputEl: hiddenInputBirthdayName
 });
 
 // Reconfigure category slider dynamically
 function configureCategoryToggle() {
-  birthdayNameLabel.classList.remove("show");
-  birthdayNameSelect.required = false; // default
+  birthdayNameWrapper.classList.remove("show")
 
   if (currentMode === "Giving") {
     categorySlider.setLabels(["Charity", "Generosity"]);
@@ -44,8 +53,8 @@ function configureCategoryToggle() {
 
     categorySlider.activate(1, { animate: false });
 
-    birthdayNameLabel.classList.add("show");
-    birthdayNameSelect.required = true; // make required only in Birthday mode
+    birthdayNameWrapper.classList.add("show");
+    birthdayNameSlider.activate(0, { animate: false });
   }
 
   if (currentMode === "Reimburse") {
@@ -54,6 +63,8 @@ function configureCategoryToggle() {
     categorySlider.clearClasses(); // remove income/expense
     categorySlider.activate(0, { animate: false });
   }
+
+  updateVendorVisibility();
 }
 
 function computeCategory(formData) {
@@ -64,8 +75,8 @@ function computeCategory(formData) {
   }
 
   if (currentMode === "Birthday") {
-    const name = birthdayNameSelect.value || "Unknown";
-    return `Birthday-${base}-${name}`;
+    const name = hiddenInputBirthdayName.value || "Unknown";
+    return `Birthday-${base.slice(0, 3)}-${name}`;
   }
 
   if (currentMode === "Reimburse") {
@@ -76,9 +87,9 @@ function computeCategory(formData) {
 function resetToggles() {
   modeSlider.activate(0, { animate: false }); // 0 = first button (Giving)
   categorySlider.activate(0, { animate: false }); // 0 = first button (Charity)
-  birthdayNameSelect.value = "";
-  birthdayNameLabel.classList.remove("show");
-  birthdayNameSelect.required = false;
+  birthdayNameSlider.activate(0, { animate: false });
+  birthdayNameWrapper.classList.remove("show");
+  updateVendorVisibility();
 }
 
 
@@ -253,11 +264,12 @@ async function loadVendors() {
 // Show / hide "Other vendor"
 vendorSelect.addEventListener("change", () => {
   if (vendorSelect.value === "Other") {
-    otherVendorLabel.classList.remove("hidden");
+    otherVendorLabel.classList.add("show");
     otherVendorInput.required = true;
   } else {
-    otherVendorLabel.classList.add("hidden");
+    otherVendorLabel.classList.remove("show");
     otherVendorInput.required = false;
+    otherVendorInput.value = "";
   }
 });
 
@@ -308,9 +320,30 @@ function renderVendors(labels, selectEl) {
 
 function resetVendorUI() {
   vendorSelect.value = "";
-  otherVendorLabel.classList.add("hidden");
+  otherVendorLabel.classList.remove("show");
   otherVendorInput.required = false;
   otherVendorInput.value = "";
+}
+
+// Hide Vendor dropdown when Birthday Income is selected
+function updateVendorVisibility() {
+  const category = hiddenInputCategory.value;
+
+  const shouldHideVendor = currentMode === "Birthday" && category === "Income";
+
+  if (shouldHideVendor) {
+    vendorLabel.classList.remove("show");
+    vendorSelect.required = false;
+
+    // Reset vendor state so stale values don't submit
+    vendorSelect.value = "";
+    otherVendorLabel.classList.add("hidden");
+    otherVendorInput.required = false;
+    otherVendorInput.value = "";
+  } else {
+    vendorLabel.classList.add("show");
+    vendorSelect.required = true;
+  }
 }
 
 form.addEventListener("submit", async (e) => {
