@@ -337,7 +337,7 @@ function updateVendorVisibility() {
 
     // Reset vendor state so stale values don't submit
     vendorSelect.value = "";
-    otherVendorLabel.classList.add("hidden");
+    otherVendorLabel.classList.remove("show");
     otherVendorInput.required = false;
     otherVendorInput.value = "";
   } else {
